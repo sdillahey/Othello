@@ -1,5 +1,6 @@
 body {
   background-image: url('../images/background.png');
+  display: flex;
 }
 
 table {
@@ -8,6 +9,7 @@ table {
   height: 600px;
   width: 600px;
   border: 5px solid black;
+  margin: 60px auto;
 }
 
 table td{
@@ -28,6 +30,10 @@ table td{
   background-color: #e65f61;
 }
 
+.container {
+  margin: auto 100px auto 5px;
+}
+
 .score {
   height: 60px;
   width: 60px;
@@ -37,9 +43,11 @@ table td{
 .player1 {
   border: 7px solid #44d9e6;
   border-radius: 10px;
+  margin: 50px;
 }
 
 .player2 {
   border: 7px solid #e65f61;
   border-radius: 10px;
+  margin: 50px;
 }

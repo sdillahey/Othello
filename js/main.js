@@ -1,15 +1,14 @@
 /*--- variables ---*/
 
 var currentPlayer, state, scoreA, scoreB,
-
-// 2d array of arrays or one big array
+  //will i need a variable for flipped pieces for the render func?
 
 
 /*--- event listeners ---*/
 
 //pop up window click .on('click', initialize);
 
-$('table').on('click', legalMove);
+$('table').on('click', '.cell', legalMove);
 
 
 
@@ -27,6 +26,7 @@ function createBoard() {
 }
 
 // counter used to keep score of player 1 (scoreA) and player 2 (scoreB)
+  //it will be used to iterate through the state array
 function counter(array) {
   for (var x = 0; x <  array.length; x++) {
     for (var y = 0; y < array[x].length; y++) {
@@ -39,6 +39,21 @@ function counter(array) {
   }
 }
 
+function render(array) {
+  for (var x = 0; x <  array.length; x++) {
+    for (var y = 0; y < array[x].length; y++) {
+      if (array[x][y] === 1) {
+          $(`tr.${x} td.${y}`).removeClass('red').addClass('blue');
+      } else if (array[x][y] === -1){
+          $(`tr.${x} td.${y}`).removeClass('blue').addClass('red');
+        }
+    }
+  }
+  $('.player1').text(scoreA);
+  $('.player2').text(scoreB);
+}
+
+function legalMove {
 //player clicks
 //run legalMove to see if that move is allowed
   //spot can't have been previously selected
@@ -48,11 +63,13 @@ function counter(array) {
   //what to do on diagonals?
   //if fails, spot can't be selected
   //update score count
-  counter();
+  counter(state);
   //update current player
-  currentPlayer === 1 ? currentPlayer = -1 ? currentPlayer = 1;
+  currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
   //render(); ie. update scores and class
+  render(state);
   //
+  }
 
 
 
@@ -61,11 +78,11 @@ function counter(array) {
   createBoard();
   scoreA = 0;
   scoreB = 0;
-  state[3][3] = 1;
-  state[4][4] = 1;
-  state[3][4] = -1;
-  state[4][3] = -1;
+  state[3][3] = -1;
+  state[4][4] = -1;
+  state[3][4] = 1;
+  state[4][3] = 1;
   currentPlayer = 1;
-  counter();
-
+  counter(state);
+  render(state);
  }

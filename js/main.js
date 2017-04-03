@@ -6,7 +6,7 @@ var currentPlayer, state, scoreA, scoreB;
 
 //pop up window click .on('click', initialize);
 
-// $('table').on('click', '.cell', legalMove);
+$('table').on('click', '.cell', playTurn);
 
 
 
@@ -25,6 +25,8 @@ function createBoard() {
 
 // counter keeps score by iterating through the state array
 function counter(array) {
+  scoreA = 0;
+  scoreB = 0;
   for (var x = 0; x <  array.length; x++) {
     for (var y = 0; y < array[x].length; y++) {
       if (array[x][y] === 1) {
@@ -50,15 +52,21 @@ function render(array) {
   $('.player2').text(scoreB);
 }
 
-function legalMove() {
-//player clicks
-//run legalMove to see if that move is allowed
-  //spot can't have been previously selected
-  //check along horizontals, verticals, and diagonals for the difference between
-  //the click indexed and next occurance index to be >absval(1)... OR comparison
-  // for true occurances, the inner pieces will be flipped so update state
-  //what to do on diagonals?
-  //if fails, spot can't be selected
+//run playTurn at Player click
+function playTurn(evt) {
+
+  //set the x and y coordinates of the click event
+  var clickId = evt.target.id;
+  var clickX = Math.floor(clickId/8);
+  var clickY = clickId%8;
+
+  //run legalMove to see if that move is allowed !! NEED TO ADD DIAGONALS
+  if(!legalMove(clickX, clickY)) return;
+
+  // In the case of a legal move, update the state !! NEED TO ADD FLIPPED PIECES
+  updateState(clickX,clickY);
+
+
   //update score count
   counter(state);
   //update current player
@@ -68,12 +76,35 @@ function legalMove() {
   //
   }
 
+function legalMove(clickX, clickY) {
+
+  // create an array of the column where the click event took place
+  var clickCol = [];
+  for (var x = 0; x <state.length; x++) {
+    clickCol.push(state[x][clickY]);
+  }
+  //Doesn't allow a player to select a spot where a piece has already been placed
+  if (state[clickX][clickY]) return false;
+  //sets and finds the first occurance, if any, along the horizontals, verticals and diagonals
+  var horizontal1 = state[clickX].slice(clickY+1).indexOf(currentPlayer);
+  var horizontal2 = state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+  var vertical1 = clickCol.slice(clickX+1).indexOf(currentPlayer);
+  var vertical2 = clickCol.slice(0,clickX).reverse().indexOf(currentPlayer);
+// Checks to see if the move is legal in at least one direction
+  return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
+  vertical2 > 0;
+
+}
+
+// updateState function only updates the state array on a legal move
+function updateState(clickX, clickY) {
+  state[clickX][clickY] = currentPlayer;
+}
+
 
 // Sets up the board to the initial game set-up
  function initialize() {
   createBoard();
-  scoreA = 0;
-  scoreB = 0;
   state[3][3] = -1;
   state[4][4] = -1;
   state[3][4] = 1;

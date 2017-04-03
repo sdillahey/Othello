@@ -18,7 +18,7 @@ function createBoard() {
   for (var x = 0; x<8; x++) {
       state.push([]);
     for (var y = 0; y<8; y++){
-      state[x].push(0);
+      state[x].push('');
     }
   }
 }
@@ -83,16 +83,42 @@ function legalMove(clickX, clickY) {
   for (var x = 0; x <state.length; x++) {
     clickCol.push(state[x][clickY]);
   }
+  //create arrays of the diagonals in the SE, SW, NW, NE directions
+  var clickDiag1 = [];
+  for (var i = 1; i<Math.min(state.length-clickX, state.length-clickY); i++){
+    clickDiag1.push(state[clickX+i][clickY+i]);
+  }
+
+  var clickDiag2 = [];
+  for (var i = 1; i<Math.min(state.length-clickX, clickY+1); i++) {
+    clickDiag2.push(state[clickX+i][clickY-i]);
+  }
+
+  var clickDiag3 = [];
+  for (var i = 1; i<Math.min(clickX+1,clickY+1); i++) {
+    clickDiag3.push(state[clickX-i][clickY-i]);
+  }
+
+  var clickDiag4 = [];
+  for (var i = 1; i<Math.min(clickX+1, state.length-clickY); i++) {
+    clickDiag4.push(state[clickX-i][clickY+i]);
+  }
+
   //Doesn't allow a player to select a spot where a piece has already been placed
   if (state[clickX][clickY]) return false;
+
   //sets and finds the first occurance, if any, along the horizontals, verticals and diagonals
   var horizontal1 = state[clickX].slice(clickY+1).indexOf(currentPlayer);
   var horizontal2 = state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
   var vertical1 = clickCol.slice(clickX+1).indexOf(currentPlayer);
   var vertical2 = clickCol.slice(0,clickX).reverse().indexOf(currentPlayer);
+  var diag1 = clickDiag1.indexOf(currentPlayer);
+  var diag2 = clickDiag2.indexOf(currentPlayer);
+  var diag3 = clickDiag3.indexOf(currentPlayer);
+  var diag4 = clickDiag4.indexOf(currentPlayer);
 // Checks to see if the move is legal in at least one direction
   return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
-  vertical2 > 0;
+  vertical2 > 0 || diag1 > 0 || diag2 > 0 || diag3 > 0 || diag4 > 0;
 
 }
 

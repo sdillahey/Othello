@@ -1,14 +1,12 @@
 /*--- variables ---*/
 
-var currentPlayer, state, scoreA, scoreB,
-  //will i need a variable for flipped pieces for the render func?
-
+var currentPlayer, state, scoreA, scoreB;
 
 /*--- event listeners ---*/
 
 //pop up window click .on('click', initialize);
 
-$('table').on('click', '.cell', legalMove);
+// $('table').on('click', '.cell', legalMove);
 
 
 
@@ -25,8 +23,7 @@ function createBoard() {
   }
 }
 
-// counter used to keep score of player 1 (scoreA) and player 2 (scoreB)
-  //it will be used to iterate through the state array
+// counter keeps score by iterating through the state array
 function counter(array) {
   for (var x = 0; x <  array.length; x++) {
     for (var y = 0; y < array[x].length; y++) {
@@ -43,9 +40,9 @@ function render(array) {
   for (var x = 0; x <  array.length; x++) {
     for (var y = 0; y < array[x].length; y++) {
       if (array[x][y] === 1) {
-          $(`tr.${x} td.${y}`).removeClass('red').addClass('blue');
+          $(`#${8*x+y}`).removeClass('red').addClass('blue');
       } else if (array[x][y] === -1){
-          $(`tr.${x} td.${y}`).removeClass('blue').addClass('red');
+          $(`#${8*x+y}`).removeClass('blue').addClass('red');
         }
     }
   }
@@ -53,7 +50,7 @@ function render(array) {
   $('.player2').text(scoreB);
 }
 
-function legalMove {
+function legalMove() {
 //player clicks
 //run legalMove to see if that move is allowed
   //spot can't have been previously selected
@@ -72,9 +69,8 @@ function legalMove {
   }
 
 
-
+// Sets up the board to the initial game set-up
  function initialize() {
-  // set up starting two pieces on the array/board, set score count, set current player
   createBoard();
   scoreA = 0;
   scoreB = 0;
@@ -86,3 +82,5 @@ function legalMove {
   counter(state);
   render(state);
  }
+
+ initialize();

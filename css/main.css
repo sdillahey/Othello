@@ -18,14 +18,14 @@ table td{
 
 .blue {
   width: 12.5%;
-  border: 2px solid black;
+  border: 5px solid black;
   border-radius: 100%;
   background-color: #44d9e6;
 }
 
 .red {
   width: 12.5%;
-  border: 2px solid black;
+  border: 5px solid black;
   border-radius: 100%;
   background-color: #e65f61;
 }
@@ -38,16 +38,18 @@ table td{
   height: 60px;
   width: 60px;
   background-color: #ffffff;
+  font-size: 45px;
+  padding: 15px;
+  text-align: center;
+  margin: 50px;
+  border-radius: 10px;
+
 }
 
 .player1 {
   border: 7px solid #44d9e6;
-  border-radius: 10px;
-  margin: 50px;
 }
 
 .player2 {
   border: 7px solid #e65f61;
-  border-radius: 10px;
-  margin: 50px;
 }

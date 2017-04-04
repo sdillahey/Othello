@@ -49,6 +49,11 @@ function render(array) {
         }
     }
   }
+  if (currentPlayer === 1) {
+    $('table').removeClass('cursorred').addClass('cursorblue');
+    } else
+      $('table').removeClass('cursorblue').addClass('cursorred');
+
   $('.player1').text(scoreA);
   $('.player2').text(scoreB);
 }
@@ -107,14 +112,55 @@ function legalMove(clickX, clickY) {
   if (state[clickX][clickY]) return false;
 
   //sets and finds the first occurance of currentPlayer's piece or blank cell, along the horizontals, verticals and diagonals
-  horizontal1 = Math.min(state[clickX].slice(clickY+1).indexOf(currentPlayer), state[clickX].slice(clickY+1).indexOf(0));
-  horizontal2 = Math.min(state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer), state[clickX].slice(0,clickY).reverse().indexOf(0));
-  vertical1 = Math.min(clickCol.slice(clickX+1).indexOf(currentPlayer), clickCol.slice(clickX+1).indexOf(0));
-  vertical2 = Math.min(clickCol.slice(0,clickX).reverse().indexOf(currentPlayer), clickCol.slice(0,clickX).reverse().indexOf(0));
-  diag1 = Math.min(clickDiag1.indexOf(currentPlayer), clickDiag1.indexOf(0));
-  diag2 = Math.min(clickDiag2.indexOf(currentPlayer), clickDiag2.indexOf(0));
-  diag3 = Math.min(clickDiag3.indexOf(currentPlayer), clickDiag3.indexOf(0));
-  diag4 = Math.min(clickDiag4.indexOf(currentPlayer), clickDiag4.indexOf(0));
+  if (state[clickX].slice(clickY+1).indexOf(0)> -1){
+    horizontal1 = state[clickX].slice(clickY+1).indexOf(0) < state[clickX].slice(clickY+1).indexOf(currentPlayer) ? 0 : state[clickX].slice(clickY+1).indexOf(currentPlayer);
+  } else {
+    horizontal1 = state[clickX].slice(clickY+1).indexOf(currentPlayer);
+  }
+
+  if (state[clickX].slice(0,clickY).reverse().indexOf(0)> -1) {
+    horizontal2 = state[clickX].slice(0,clickY).reverse().indexOf(0) < state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer) ? 0 : state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+  } else {
+    horizontal2 = state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+  }
+
+  if (clickCol.slice(clickX+1).indexOf(0)> -1) {
+  vertical1 = clickCol.slice(clickX+1).indexOf(0) < clickCol.slice(clickX+1).indexOf(currentPlayer) ? 0 : clickCol.slice(clickX+1).indexOf(currentPlayer);
+  } else {
+    vertical1 = clickCol.slice(clickX+1).indexOf(currentPlayer);
+  }
+
+  if (clickCol.slice(0,clickX).reverse().indexOf(0) > -1) {
+    vertical2 = clickCol.slice(0,clickX).reverse().indexOf(0) < clickCol.slice(0,clickX).reverse().indexOf(currentPlayer) ? 0 : clickCol.slice(0,clickX).reverse().indexOf(currentPlayer);
+  } else {
+    vertical2 = clickCol.slice(0,clickX).reverse().indexOf(currentPlayer);
+  }
+
+  if (clickDiag1.indexOf(0) >-1) {
+    diag1 = clickDiag1.indexOf(0) < clickDiag1.indexOf(currentPlayer) ? 0 : clickDiag1.indexOf(currentPlayer);
+  } else {
+    diag1 = clickDiag1.indexOf(currentPlayer);
+  }
+
+  if (clickDiag2.indexOf(0) >-1) {
+    diag2 = clickDiag2.indexOf(0) < clickDiag2.indexOf(currentPlayer) ? 0 : clickDiag2.indexOf(currentPlayer);
+  } else {
+    diag2 = clickDiag2.indexOf(currentPlayer);
+  }
+
+  if (clickDiag3.indexOf(0) >-1) {
+    diag3 = clickDiag3.indexOf(0) < clickDiag3.indexOf(currentPlayer) ? 0 : clickDiag3.indexOf(currentPlayer);
+  } else {
+    diag3 = clickDiag3.indexOf(currentPlayer);
+  }
+
+  if (clickDiag4.indexOf(0) >-1) {
+    diag4 = clickDiag4.indexOf(0) < clickDiag4.indexOf(currentPlayer) ? 0 : clickDiag4.indexOf(currentPlayer);
+  } else {
+    diag4 = clickDiag4.indexOf(currentPlayer);
+  }
+
+
 // Checks to see if the move is legal in at least one direction
   return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
   vertical2 > 0 || diag1 > 0 || diag2 > 0 || diag3 > 0 || diag4 > 0;

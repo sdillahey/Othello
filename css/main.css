@@ -30,6 +30,14 @@ table td{
   background-color: #e65f61;
 }
 
+.cursorred {
+    cursor: url('../images/r.ico'), auto;
+}
+
+.cursorblue {
+  cursor: url('../images/b.ico'), auto;
+}
+
 .container {
   margin: auto 100px auto 5px;
 }

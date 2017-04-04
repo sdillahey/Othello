@@ -1,6 +1,7 @@
 /*--- variables ---*/
 
-var currentPlayer, state, scoreA, scoreB;
+var currentPlayer, state, scoreA, scoreB, horizontal1, horizontal2,
+vertical1, vertical2, diag1, diag2, diag3, diag4;
 
 /*--- event listeners ---*/
 
@@ -66,7 +67,6 @@ function playTurn(evt) {
   // In the case of a legal move, update the state !! NEED TO ADD FLIPPED PIECES
   updateState(clickX,clickY);
 
-
   //update score count
   counter(state);
   //update current player
@@ -77,7 +77,6 @@ function playTurn(evt) {
   }
 
 function legalMove(clickX, clickY) {
-
   // create an array of the column where the click event took place
   var clickCol = [];
   for (var x = 0; x <state.length; x++) {
@@ -107,15 +106,15 @@ function legalMove(clickX, clickY) {
   //Doesn't allow a player to select a spot where a piece has already been placed
   if (state[clickX][clickY]) return false;
 
-  //sets and finds the first occurance or blank cell, along the horizontals, verticals and diagonals
-  var horizontal1 = Math.min(state[clickX].slice(clickY+1).indexOf(currentPlayer), state[clickX].slice(clickY+1).indexOf(0));
-  var horizontal2 = Math.min(state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer), state[clickX].slice(0,clickY).reverse().indexOf(0));
-  var vertical1 = Math.min(clickCol.slice(clickX+1).indexOf(currentPlayer), clickCol.slice(clickX+1).indexOf(0));
-  var vertical2 = Math.min(clickCol.slice(0,clickX).reverse().indexOf(currentPlayer), clickCol.slice(0,clickX).reverse().indexOf(currentPlayer));
-  var diag1 = Math.min(clickDiag1.indexOf(currentPlayer), clickDiag1.indexOf(0));
-  var diag2 = Math.min(clickDiag2.indexOf(currentPlayer), clickDiag2.indexOf(0));
-  var diag3 = Math.min(clickDiag3.indexOf(currentPlayer), clickDiag3.indexOf(0));
-  var diag4 = Math.min(clickDiag4.indexOf(currentPlayer), clickDiag4.indexOf(0));
+  //sets and finds the first occurance of currentPlayer's piece or blank cell, along the horizontals, verticals and diagonals
+  horizontal1 = Math.min(state[clickX].slice(clickY+1).indexOf(currentPlayer), state[clickX].slice(clickY+1).indexOf(0));
+  horizontal2 = Math.min(state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer), state[clickX].slice(0,clickY).reverse().indexOf(0));
+  vertical1 = Math.min(clickCol.slice(clickX+1).indexOf(currentPlayer), clickCol.slice(clickX+1).indexOf(0));
+  vertical2 = Math.min(clickCol.slice(0,clickX).reverse().indexOf(currentPlayer), clickCol.slice(0,clickX).reverse().indexOf(0));
+  diag1 = Math.min(clickDiag1.indexOf(currentPlayer), clickDiag1.indexOf(0));
+  diag2 = Math.min(clickDiag2.indexOf(currentPlayer), clickDiag2.indexOf(0));
+  diag3 = Math.min(clickDiag3.indexOf(currentPlayer), clickDiag3.indexOf(0));
+  diag4 = Math.min(clickDiag4.indexOf(currentPlayer), clickDiag4.indexOf(0));
 // Checks to see if the move is legal in at least one direction
   return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
   vertical2 > 0 || diag1 > 0 || diag2 > 0 || diag3 > 0 || diag4 > 0;
@@ -125,11 +124,51 @@ function legalMove(clickX, clickY) {
 // updateState function only updates the state array on a legal move
 function updateState(clickX, clickY) {
   state[clickX][clickY] = currentPlayer;
+  if (horizontal1 > 0) {
+    for (var i = 0; i<= horizontal1; i++) {
+      state[clickX][clickY+i] = currentPlayer;
+    }
+  }
+  if (horizontal2 > 0) {
+    for (var i = 0; i<= horizontal2; i++) {
+      state[clickX][clickY-i] = currentPlayer;
+    }
+  }
+  if (vertical1 > 0) {
+    for (var i = 0; i<= vertical1; i++) {
+      state[clickX+i][clickY] = currentPlayer;
+    }
+  }
+  if (vertical2 > 0) {
+    for(var i = 0; i<= vertical2; i++){
+      state[clickX-i][clickY] = currentPlayer;
+    }
+  }
+  if (diag1>0) {
+    for(var i = 0; i<= diag1; i++){
+      state[clickX+i][clickY+i] = currentPlayer;
+    }
+  }
+  if (diag2>0) {
+    for(var i = 0; i<= diag2; i++){
+      state[clickX+i][clickY-i] = currentPlayer;
+    }
+  }
+  if (diag3>0) {
+    for(var i = 0; i<= diag3; i++){
+      state[clickX-i][clickY-i] = currentPlayer;
+    }
+  }
+  if (diag4>0) {
+    for(var i = 0; i<= diag4; i++){
+      state[clickX-i][clickY+i] = currentPlayer;
+    }
+  }
 }
 
 
 // Sets up the board to the initial game set-up
- function initialize() {
+function initialize() {
   createBoard();
   state[3][3] = -1;
   state[4][4] = -1;

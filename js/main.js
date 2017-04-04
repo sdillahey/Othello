@@ -5,7 +5,15 @@ vertical1, vertical2, diag1, diag2, diag3, diag4;
 
 /*--- event listeners ---*/
 
-//pop up window click .on('click', initialize);
+$(document).ready(function() {
+  $('.modal').show();
+})
+
+$('.button').on('click', function () {
+  $('.modal').hide();
+})
+
+$('.button').on('click', initialize);
 
 $('table').on('click', '.cell', playTurn);
 
@@ -225,4 +233,3 @@ function initialize() {
   render(state);
  }
 
- initialize();

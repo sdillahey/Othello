@@ -94,7 +94,7 @@ table td{
   display: none;
 }
 
-.gameover {
+.endgame {
   display: none;
 }
 
@@ -110,7 +110,7 @@ table td{
   border-radius: 5px;
 }
 
-.gameover-content {
+.endgame-content {
   background-color: rgba(245, 255, 249, .93);
   height: 200px;
   width: 600px;

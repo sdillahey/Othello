@@ -1,7 +1,11 @@
 /*--- variables ---*/
 
-var currentPlayer, state, scoreA, scoreB, horizontal1, horizontal2,
-vertical1, vertical2, diag1, diag2, diag3, diag4, emptySpaces, winner, winningColor;
+var currentPlayer, board, scoreA, scoreB, horizontal1, horizontal2,
+vertical1, vertical2, diag1, diag2, diag3, diag4, gameOver, winningColor;
+
+var sound = 'https://www.freesound.org/data/previews/41/41857_160760-lq.mp3';
+var player = new Audio();
+
 
 /*--- event listeners ---*/
 
@@ -14,7 +18,7 @@ $('#begin').on('click', function () {
 })
 
 $('#replay').on('click', function () {
-   $('.gameover').toggle();
+   $('.endgame').toggle();
 })
 
 $('.button').on('click', initialize);
@@ -24,25 +28,24 @@ $('table').on('click', '.cell', playTurn);
 $('.skipturn').on('click', function() {
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
   checkWinner();
-  render(state);
+  render(board);
 })
-
 
 
 /*--- functions ---*/
 
-// createBoard to create an array of arrays of all zeroes to represent the board
+// When called, createBoard creates an 8x8 array of arrays of zeroes to represent the blank board
 function createBoard() {
-  state = [];
+  board = [];
   for (var x = 0; x<8; x++) {
-      state.push([]);
+      board.push([]);
     for (var y = 0; y<8; y++){
-      state[x].push(0);
+      board[x].push(0);
     }
   }
 }
 
-// counter keeps score by iterating through the state array
+// counter function is used to get the score by iterating through the game board array
 function counter(array) {
   scoreA = 0;
   scoreB = 0;
@@ -57,7 +60,56 @@ function counter(array) {
   }
 }
 
-//Updates the view to reflect the state
+// updateState function updates the game board array in the case of a legal move
+function updateState(x, y) {
+
+  //updates the spot where the player placed their game piece
+  board[x][y] = currentPlayer;
+
+  //updates the pieces that are 'overtaken' in each direction
+  if (horizontal1 > 0) {
+    for (var i = 0; i<= horizontal1; i++) {
+      board[x][y+i] = currentPlayer;
+    }
+  }
+  if (horizontal2 > 0) {
+    for (var i = 0; i<= horizontal2; i++) {
+      board[x][y-i] = currentPlayer;
+    }
+  }
+  if (vertical1 > 0) {
+    for (var i = 0; i<= vertical1; i++) {
+      board[x+i][y] = currentPlayer;
+    }
+  }
+  if (vertical2 > 0) {
+    for(var i = 0; i<= vertical2; i++){
+      board[x-i][y] = currentPlayer;
+    }
+  }
+  if (diag1>0) {
+    for(var i = 0; i<= diag1; i++){
+      board[x+i][y+i] = currentPlayer;
+    }
+  }
+  if (diag2>0) {
+    for(var i = 0; i<= diag2; i++){
+      board[x+i][y-i] = currentPlayer;
+    }
+  }
+  if (diag3>0) {
+    for(var i = 0; i<= diag3; i++){
+      board[x-i][y-i] = currentPlayer;
+    }
+  }
+  if (diag4>0) {
+    for(var i = 0; i<= diag4; i++){
+      board[x-i][y+i] = currentPlayer;
+    }
+  }
+}
+
+// render function updates the view to reflect the state of the board
 function render(array) {
   for (var x = 0; x <  array.length; x++) {
     for (var y = 0; y < array[x].length; y++) {
@@ -78,9 +130,9 @@ function render(array) {
   $('.player1').text(scoreA);
   $('.player2').text(scoreB);
 
-  if (winner) {
+  if (gameOver) {
     $('.win-message').text('Congrats ' + winningColor + '! You win.');
-    $('.gameover').toggle();
+    $('.endgame').toggle();
   }
 }
 
@@ -95,62 +147,68 @@ function playTurn(evt) {
   //run legalMove to see if that move is allowed !! NEED TO ADD DIAGONALS
   if(!legalMove(clickX, clickY, currentPlayer)) return;
 
-  // In the case of a legal move, update the state !! NEED TO ADD FLIPPED PIECES
+  // In the case of a legal move, update the board !! NEED TO ADD FLIPPED PIECES
   updateState(clickX,clickY);
 
   //update score count
-  counter(state);
+  counter(board);
   //update current player
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
 
+  var pieceFlip = Math.max(horizontal1, horizontal2, vertical1, vertical2, diag1, diag2, diag3, diag4);
+  for (var i = 0; i < pieceFlip; i++) {
+    setTimeout(function() {
+      player.play();
+    }, 215 * i);
+  }
   //check for winner
   checkWinner();
   //render(); ie. update scores and class
-  render(state);
+  render(board);
   //
-  }
+}
 
 function legalMove(clickX, clickY, currentPlayer) {
   // create an array of the column where the click event took place
   var clickCol = [];
-  for (var x = 0; x <state.length; x++) {
-    clickCol.push(state[x][clickY]);
+  for (var x = 0; x <board.length; x++) {
+    clickCol.push(board[x][clickY]);
   }
   //create arrays of the diagonals in the SE, SW, NW, NE directions
   var clickDiag1 = [];
-  for (var i = 1; i<Math.min(state.length-clickX, state.length-clickY); i++){
-    clickDiag1.push(state[clickX+i][clickY+i]);
+  for (var i = 1; i<Math.min(board.length-clickX, board.length-clickY); i++){
+    clickDiag1.push(board[clickX+i][clickY+i]);
   }
 
   var clickDiag2 = [];
-  for (var i = 1; i<Math.min(state.length-clickX, clickY+1); i++) {
-    clickDiag2.push(state[clickX+i][clickY-i]);
+  for (var i = 1; i<Math.min(board.length-clickX, clickY+1); i++) {
+    clickDiag2.push(board[clickX+i][clickY-i]);
   }
 
   var clickDiag3 = [];
   for (var i = 1; i<Math.min(clickX+1,clickY+1); i++) {
-    clickDiag3.push(state[clickX-i][clickY-i]);
+    clickDiag3.push(board[clickX-i][clickY-i]);
   }
 
   var clickDiag4 = [];
-  for (var i = 1; i<Math.min(clickX+1, state.length-clickY); i++) {
-    clickDiag4.push(state[clickX-i][clickY+i]);
+  for (var i = 1; i<Math.min(clickX+1, board.length-clickY); i++) {
+    clickDiag4.push(board[clickX-i][clickY+i]);
   }
 
   //Doesn't allow a player to select a spot where a piece has already been placed
-  if (state[clickX][clickY]) return false;
+  if (board[clickX][clickY]) return false;
 
   //sets and finds the first occurance of currentPlayer's piece or blank cell, along the horizontals, verticals and diagonals
-  if (state[clickX].slice(clickY+1).indexOf(0)> -1){
-    horizontal1 = state[clickX].slice(clickY+1).indexOf(0) < state[clickX].slice(clickY+1).indexOf(currentPlayer) ? 0 : state[clickX].slice(clickY+1).indexOf(currentPlayer);
+  if (board[clickX].slice(clickY+1).indexOf(0)> -1){
+    horizontal1 = board[clickX].slice(clickY+1).indexOf(0) < board[clickX].slice(clickY+1).indexOf(currentPlayer) ? 0 : board[clickX].slice(clickY+1).indexOf(currentPlayer);
   } else {
-    horizontal1 = state[clickX].slice(clickY+1).indexOf(currentPlayer);
+    horizontal1 = board[clickX].slice(clickY+1).indexOf(currentPlayer);
   }
 
-  if (state[clickX].slice(0,clickY).reverse().indexOf(0)> -1) {
-    horizontal2 = state[clickX].slice(0,clickY).reverse().indexOf(0) < state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer) ? 0 : state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+  if (board[clickX].slice(0,clickY).reverse().indexOf(0)> -1) {
+    horizontal2 = board[clickX].slice(0,clickY).reverse().indexOf(0) < board[clickX].slice(0,clickY).reverse().indexOf(currentPlayer) ? 0 : board[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
   } else {
-    horizontal2 = state[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+    horizontal2 = board[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
   }
 
   if (clickCol.slice(clickX+1).indexOf(0)> -1) {
@@ -196,89 +254,45 @@ function legalMove(clickX, clickY, currentPlayer) {
 
 }
 
-// updateState function only updates the state array on a legal move
-function updateState(clickX, clickY) {
-  state[clickX][clickY] = currentPlayer;
-  if (horizontal1 > 0) {
-    for (var i = 0; i<= horizontal1; i++) {
-      state[clickX][clickY+i] = currentPlayer;
-    }
-  }
-  if (horizontal2 > 0) {
-    for (var i = 0; i<= horizontal2; i++) {
-      state[clickX][clickY-i] = currentPlayer;
-    }
-  }
-  if (vertical1 > 0) {
-    for (var i = 0; i<= vertical1; i++) {
-      state[clickX+i][clickY] = currentPlayer;
-    }
-  }
-  if (vertical2 > 0) {
-    for(var i = 0; i<= vertical2; i++){
-      state[clickX-i][clickY] = currentPlayer;
-    }
-  }
-  if (diag1>0) {
-    for(var i = 0; i<= diag1; i++){
-      state[clickX+i][clickY+i] = currentPlayer;
-    }
-  }
-  if (diag2>0) {
-    for(var i = 0; i<= diag2; i++){
-      state[clickX+i][clickY-i] = currentPlayer;
-    }
-  }
-  if (diag3>0) {
-    for(var i = 0; i<= diag3; i++){
-      state[clickX-i][clickY-i] = currentPlayer;
-    }
-  }
-  if (diag4>0) {
-    for(var i = 0; i<= diag4; i++){
-      state[clickX-i][clickY+i] = currentPlayer;
-    }
-  }
-}
+
 
 // Checks to see if there is a winner
 function checkWinner() {
   // check which score is bigger
-  scoreA > scoreB ? winningColor = 'blue' : winningColor = 'red';
+  winningColor = scoreA > scoreB ? 'blue' : 'red';
 
-  emptySpaces = [];
+  var emptySpaces = [];
 
-  //iterates through the state array and pushes the indices of all empty spaces to emptySpaces
-  for (var x = 0; x <state.length; x++){
-    var emptyX = getAllIndexes(state[x],0);
+  //iterates through the board array and pushes the indices of all empty spaces to emptySpaces
+  for (var x = 0; x <board.length; x++){
+    var emptyX = getAllIndexes(board[x],0);
     for(var y = 0; y < emptyX.length; y++) {
       emptySpaces.push([x,emptyX[y]]);
     }
   }
 
-  if (emptySpaces.length === 0) {
-    return winner = true;
+  if (!emptySpaces.length) {
+    gameOver = true;
+    return;
   }
 
   for (var i = 0; i<emptySpaces.length; i++){
-    if(legalMove(emptySpaces[i][0],emptySpaces[i][1], currentPlayer)) {
-      return winner = false;
-    } else if (legalMove(emptySpaces[i][0], emptySpaces[i][1], -currentPlayer)) {
-        return winner = false;
-      }
-   }
+    if (legalMove(emptySpaces[i][0],emptySpaces[i][1], currentPlayer) ||
+      legalMove(emptySpaces[i][0], emptySpaces[i][1], -currentPlayer)) return;
+  }
 
-  return winner = true;
+  gameOver = true;
 
 }
 
 
-var almostDone = "[[0,0,-1,0,0,-1,1,0],[0,0,-1,-1,-1,-1,-1,-1],[-1,-1,-1,1,1,-1,1,-1],[0,-1,1,-1,1,-1,1,-1],[-1,-1,-1,1,-1,1,1,-1],[1,-1,1,-1,1,1,1,-1],[1,-1,-1,1,1,1,1,-1],[1,-1,-1,-1,-1,-1,-1,-1]]"
-var testState = "[[1,1,1,1,-1,-1,-1,-1],[1,1,1,-1,-1,-1,1,-1],[1,1,-1,1,-1,-1,-1,1],[1,1,-1,1,-1,-1,1,1],[1,-1,1,1,1,1,1,1],[1,1,-1,1,1,-1,1,1],[1,1,-1,1,-1,-1,1,1],[1,1,1,1,1,1,1,1]]"
-function getToEnd() {
-  state = JSON.parse(almostDone)
-  render(state)
-}
+// var almostDone = "[[0,0,-1,0,0,-1,1,0],[0,0,-1,-1,-1,-1,-1,-1],[-1,-1,-1,1,1,-1,1,-1],[0,-1,1,-1,1,-1,1,-1],[-1,-1,-1,1,-1,1,1,-1],[1,-1,1,-1,1,1,1,-1],[1,-1,-1,1,1,1,1,-1],[1,-1,-1,-1,-1,-1,-1,-1]]"
+// var testState = "[[1,1,1,1,-1,-1,-1,-1],[1,1,1,-1,-1,-1,1,-1],[1,1,-1,1,-1,-1,-1,1],[1,1,-1,1,-1,-1,1,1],[1,-1,1,1,1,1,1,1],[1,1,-1,1,1,-1,1,1],[1,1,-1,1,-1,-1,1,1],[1,1,1,1,1,1,1,1]]"
+
+// function getToEnd() {
+//   board = JSON.parse(almostDone)
+//   render(board)
+// }
 
 //get indexes of empty spaces
 function getAllIndexes(array, val) {
@@ -294,12 +308,13 @@ function getAllIndexes(array, val) {
 // Sets up the board to the initial game set-up
 function initialize() {
   createBoard();
-  state[3][3] = -1;
-  state[4][4] = -1;
-  state[3][4] = 1;
-  state[4][3] = 1;
+  board[3][3] = -1;
+  board[4][4] = -1;
+  board[3][4] = 1;
+  board[4][3] = 1;
   currentPlayer = 1;
-  winner = false;
-  counter(state);
-  render(state);
+  gameOver = false;
+  counter(board);
+  player.src = sound;
+  render(board);
  }

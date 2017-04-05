@@ -46,14 +46,14 @@ function createBoard() {
 }
 
 // counter function is used to get the score by iterating through the game board array
-function counter(array) {
+function counter() {
   scoreA = 0;
   scoreB = 0;
-  for (var x = 0; x <  array.length; x++) {
-    for (var y = 0; y < array[x].length; y++) {
-      if (array[x][y] === 1) {
+  for (var x = 0; x <  board.length; x++) {
+    for (var y = 0; y < board[x].length; y++) {
+      if (board[x][y] === 1) {
         scoreA++;
-      } else if (array[x][y] === -1) {
+      } else if (board[x][y] === -1) {
         scoreB++;
       }
     }
@@ -110,12 +110,12 @@ function updateState(x, y) {
 }
 
 // render function updates the view to reflect the state of the board
-function render(array) {
-  for (var x = 0; x <  array.length; x++) {
-    for (var y = 0; y < array[x].length; y++) {
-      if (array[x][y] === 1) {
+function render() {
+  for (var x = 0; x <  board.length; x++) {
+    for (var y = 0; y < board[x].length; y++) {
+      if (board[x][y] === 1) {
           $(`#${8*x+y}`).removeClass('red').addClass('blue');
-      } else if (array[x][y] === -1){
+      } else if (board[x][y] === -1){
           $(`#${8*x+y}`).removeClass('blue').addClass('red');
         } else {
           $(`#${8*x+y}`).removeClass('blue').removeClass('red');
@@ -144,14 +144,14 @@ function playTurn(evt) {
   var clickX = Math.floor(clickId/8);
   var clickY = clickId%8;
 
-  //run legalMove to see if that move is allowed !! NEED TO ADD DIAGONALS
+  //run legalMove to see if that move is allowed
   if(!legalMove(clickX, clickY, currentPlayer)) return;
 
-  // In the case of a legal move, update the board !! NEED TO ADD FLIPPED PIECES
+  // In the case of a legal move, update the board
   updateState(clickX,clickY);
 
   //update score count
-  counter(board);
+  counter();
   //update current player
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
 
@@ -164,63 +164,63 @@ function playTurn(evt) {
   //check for winner
   checkWinner();
   //render(); ie. update scores and class
-  render(board);
+  render();
   //
 }
 
-function legalMove(clickX, clickY, currentPlayer) {
+function legalMove(x, y, currentPlayer) {
   // create an array of the column where the click event took place
   var clickCol = [];
-  for (var x = 0; x <board.length; x++) {
-    clickCol.push(board[x][clickY]);
+  for (var i = 0; i <board.length; i++) {
+    clickCol.push(board[i][y]);
   }
   //create arrays of the diagonals in the SE, SW, NW, NE directions
   var clickDiag1 = [];
-  for (var i = 1; i<Math.min(board.length-clickX, board.length-clickY); i++){
-    clickDiag1.push(board[clickX+i][clickY+i]);
+  for (var i = 1; i<Math.min(board.length-x, board.length-y); i++){
+    clickDiag1.push(board[x+i][y+i]);
   }
 
   var clickDiag2 = [];
-  for (var i = 1; i<Math.min(board.length-clickX, clickY+1); i++) {
-    clickDiag2.push(board[clickX+i][clickY-i]);
+  for (var i = 1; i<Math.min(board.length-x, y+1); i++) {
+    clickDiag2.push(board[x+i][y-i]);
   }
 
   var clickDiag3 = [];
-  for (var i = 1; i<Math.min(clickX+1,clickY+1); i++) {
-    clickDiag3.push(board[clickX-i][clickY-i]);
+  for (var i = 1; i<Math.min(x+1,y+1); i++) {
+    clickDiag3.push(board[x-i][y-i]);
   }
 
   var clickDiag4 = [];
-  for (var i = 1; i<Math.min(clickX+1, board.length-clickY); i++) {
-    clickDiag4.push(board[clickX-i][clickY+i]);
+  for (var i = 1; i<Math.min(x+1, board.length-y); i++) {
+    clickDiag4.push(board[x-i][y+i]);
   }
 
   //Doesn't allow a player to select a spot where a piece has already been placed
-  if (board[clickX][clickY]) return false;
+  if (board[x][y]) return false;
 
   //sets and finds the first occurance of currentPlayer's piece or blank cell, along the horizontals, verticals and diagonals
-  if (board[clickX].slice(clickY+1).indexOf(0)> -1){
-    horizontal1 = board[clickX].slice(clickY+1).indexOf(0) < board[clickX].slice(clickY+1).indexOf(currentPlayer) ? 0 : board[clickX].slice(clickY+1).indexOf(currentPlayer);
+  if (board[x].slice(y+1).indexOf(0)> -1){
+    horizontal1 = board[x].slice(y+1).indexOf(0) < board[x].slice(y+1).indexOf(currentPlayer) ? 0 : board[x].slice(y+1).indexOf(currentPlayer);
   } else {
-    horizontal1 = board[clickX].slice(clickY+1).indexOf(currentPlayer);
+    horizontal1 = board[x].slice(y+1).indexOf(currentPlayer);
   }
 
-  if (board[clickX].slice(0,clickY).reverse().indexOf(0)> -1) {
-    horizontal2 = board[clickX].slice(0,clickY).reverse().indexOf(0) < board[clickX].slice(0,clickY).reverse().indexOf(currentPlayer) ? 0 : board[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+  if (board[x].slice(0,y).reverse().indexOf(0)> -1) {
+    horizontal2 = board[x].slice(0,y).reverse().indexOf(0) < board[x].slice(0,y).reverse().indexOf(currentPlayer) ? 0 : board[x].slice(0,y).reverse().indexOf(currentPlayer);
   } else {
-    horizontal2 = board[clickX].slice(0,clickY).reverse().indexOf(currentPlayer);
+    horizontal2 = board[x].slice(0,y).reverse().indexOf(currentPlayer);
   }
 
-  if (clickCol.slice(clickX+1).indexOf(0)> -1) {
-  vertical1 = clickCol.slice(clickX+1).indexOf(0) < clickCol.slice(clickX+1).indexOf(currentPlayer) ? 0 : clickCol.slice(clickX+1).indexOf(currentPlayer);
+  if (clickCol.slice(x+1).indexOf(0)> -1) {
+  vertical1 = clickCol.slice(x+1).indexOf(0) < clickCol.slice(x+1).indexOf(currentPlayer) ? 0 : clickCol.slice(x+1).indexOf(currentPlayer);
   } else {
-    vertical1 = clickCol.slice(clickX+1).indexOf(currentPlayer);
+    vertical1 = clickCol.slice(x+1).indexOf(currentPlayer);
   }
 
-  if (clickCol.slice(0,clickX).reverse().indexOf(0) > -1) {
-    vertical2 = clickCol.slice(0,clickX).reverse().indexOf(0) < clickCol.slice(0,clickX).reverse().indexOf(currentPlayer) ? 0 : clickCol.slice(0,clickX).reverse().indexOf(currentPlayer);
+  if (clickCol.slice(0,x).reverse().indexOf(0) > -1) {
+    vertical2 = clickCol.slice(0,x).reverse().indexOf(0) < clickCol.slice(0,x).reverse().indexOf(currentPlayer) ? 0 : clickCol.slice(0,x).reverse().indexOf(currentPlayer);
   } else {
-    vertical2 = clickCol.slice(0,clickX).reverse().indexOf(currentPlayer);
+    vertical2 = clickCol.slice(0,x).reverse().indexOf(currentPlayer);
   }
 
   if (clickDiag1.indexOf(0) >-1) {
@@ -286,14 +286,6 @@ function checkWinner() {
 }
 
 
-// var almostDone = "[[0,0,-1,0,0,-1,1,0],[0,0,-1,-1,-1,-1,-1,-1],[-1,-1,-1,1,1,-1,1,-1],[0,-1,1,-1,1,-1,1,-1],[-1,-1,-1,1,-1,1,1,-1],[1,-1,1,-1,1,1,1,-1],[1,-1,-1,1,1,1,1,-1],[1,-1,-1,-1,-1,-1,-1,-1]]"
-// var testState = "[[1,1,1,1,-1,-1,-1,-1],[1,1,1,-1,-1,-1,1,-1],[1,1,-1,1,-1,-1,-1,1],[1,1,-1,1,-1,-1,1,1],[1,-1,1,1,1,1,1,1],[1,1,-1,1,1,-1,1,1],[1,1,-1,1,-1,-1,1,1],[1,1,1,1,1,1,1,1]]"
-
-// function getToEnd() {
-//   board = JSON.parse(almostDone)
-//   render(board)
-// }
-
 //get indexes of empty spaces
 function getAllIndexes(array, val) {
   var indices = [];
@@ -314,7 +306,7 @@ function initialize() {
   board[4][3] = 1;
   currentPlayer = 1;
   gameOver = false;
-  counter(board);
+  counter();
   player.src = sound;
-  render(board);
+  render();
  }

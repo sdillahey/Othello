@@ -299,6 +299,7 @@ function initialize() {
   state[3][4] = 1;
   state[4][3] = 1;
   currentPlayer = 1;
+  winner = false;
   counter(state);
   render(state);
  }

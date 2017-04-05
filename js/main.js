@@ -1,7 +1,7 @@
 /*--- variables ---*/
 
 var currentPlayer, state, scoreA, scoreB, horizontal1, horizontal2,
-vertical1, vertical2, diag1, diag2, diag3, diag4, winner, winningColor, checkBoard;
+vertical1, vertical2, diag1, diag2, diag3, diag4, emptySpaces, checkBoard, winner, winningColor;
 
 /*--- event listeners ---*/
 
@@ -10,8 +10,11 @@ $(document).ready(function() {
 })
 
 $('.button').on('click', function () {
-  $('.modal').hide();
-  $('.gameover').hide();
+   $('.gamestart').hide();
+})
+
+$('.replay').on('click', function () {
+   $('.gameover').hide();
 })
 
 $('.button').on('click', initialize);
@@ -20,6 +23,7 @@ $('table').on('click', '.cell', playTurn);
 
 $('.skipturn').on('click', function() {
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
+  checkWinner();
   render(state);
 })
 
@@ -89,7 +93,7 @@ function playTurn(evt) {
   var clickY = clickId%8;
 
   //run legalMove to see if that move is allowed !! NEED TO ADD DIAGONALS
-  if(!legalMove(clickX, clickY)) return;
+  if(!legalMove(clickX, clickY, currentPlayer)) return;
 
   // In the case of a legal move, update the state !! NEED TO ADD FLIPPED PIECES
   updateState(clickX,clickY);
@@ -106,7 +110,7 @@ function playTurn(evt) {
   //
   }
 
-function legalMove(clickX, clickY) {
+function legalMove(clickX, clickY, currentPlayer) {
   // create an array of the column where the click event took place
   var clickCol = [];
   for (var x = 0; x <state.length; x++) {
@@ -239,26 +243,44 @@ function updateState(clickX, clickY) {
 
 // Checks to see if there is a winner
 function checkWinner() {
-  checkBoard = [];
-  var emptySpaces = [];
-  //iterates through the state area to look for a blank space
-  for (var x = 0; x <state.length; x++){
-    checkBoard.push(state[x].indexOf(0));
-    console.log(getAllIndexes(state[x],0));
-    console.log('a', state[x]);
-  }
-
-  // check if board is full
-  JSON.stringify(checkBoard) === JSON.stringify([-1, -1, -1, -1, -1, -1, -1, -1]) ? winner = true : winner = false;
-
   // check which score is bigger
   scoreA > scoreB ? winningColor = 'blue' : winningColor = 'red';
+
+  emptySpaces = [];
+  checkBoard = [];
+
+  //iterates through the state array and pushes the indices of all empty spaces to emptySpaces
+  //creates an array of the indices of blank spaces
+  for (var x = 0; x <state.length; x++){
+    var emptyX = getAllIndexes(state[x],0);
+    checkBoard.push(state[x].indexOf(0));
+    for(var y = 0; y < emptyX.length; y++) {
+      emptySpaces.push([x,emptyX[y]]);
+    }
+  }
+
+  if (JSON.stringify(checkBoard) === JSON.stringify([-1, -1, -1, -1, -1, -1, -1, -1])) {
+    return winner = true;
+  }
+//try starting with if (emptySpaces is an empty array) return winner = true
+  for (var i = 0; i<emptySpaces.length; i++){
+    if(legalMove(emptySpaces[i][0],emptySpaces[i][1], currentPlayer)) {
+      console.log('checkpoint 1')
+      return winner = false;
+     // check emptySpaces for legalMove for opponenet
+    } else if (legalMove(emptySpaces[i][0], emptySpaces[i][1], -currentPlayer)) {
+        console.log('check 2')
+        return winner = false;
+      }
+   }
+
+  return winner = true;
+
 }
 
-var testA = [-1, -1, -1, -1, -1, -1, 0, 0]
-var testB = [7, -1, -1, -1, -1, -1, 7, 6]
-var almostDone = "[[0,0,-1,0,0,-1,1,0],[0,0,-1,-1,-1,-1,-1,-1],[-1,-1,-1,1,1,-1,1,-1],[0,-1,1,-1,1,-1,1,-1],[-1,-1,-1,1,-1,1,1,-1],[1,-1,1,-1,1,1,1,-1],[1,-1,-1,1,1,1,1,-1],[1,-1,-1,-1,-1,-1,-1,-1]]"
 
+var almostDone = "[[0,0,-1,0,0,-1,1,0],[0,0,-1,-1,-1,-1,-1,-1],[-1,-1,-1,1,1,-1,1,-1],[0,-1,1,-1,1,-1,1,-1],[-1,-1,-1,1,-1,1,1,-1],[1,-1,1,-1,1,1,1,-1],[1,-1,-1,1,1,1,1,-1],[1,-1,-1,-1,-1,-1,-1,-1]]"
+var testState = "[[1,1,1,1,-1,-1,-1,-1],[1,1,1,-1,-1,-1,1,-1],[1,1,-1,1,-1,-1,-1,1],[1,1,-1,1,-1,-1,1,1],[1,-1,1,1,1,1,1,1],[1,1,-1,1,1,-1,1,1],[1,1,-1,1,-1,-1,1,1],[1,1,1,1,1,1,1,1]]"
 function getToEnd() {
   state = JSON.parse(almostDone)
   render(state)

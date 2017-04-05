@@ -9,38 +9,35 @@ body {
 
 table {
   table-layout: fixed;
-  background-color: #dde7e7;
   border-collapse: collapse;
   height: 600px;
   width: 600px;
-  border: 5px solid black;
+  border: 5px solid #0e191a;
   margin: 5% 5% 5% auto;
 }
 
 table td{
-  border: 5px solid black;
+  border: 5px solid #0e191a;
+  background-color: #f7f2f9;
+  box-shadow: 0px 0px 15px 5px rgba(0,0,0,0.75);
 }
 
 .blue {
-  width: 12.5%;
-  border: 5px solid black;
-  border-radius: 100%;
-  background-color: #44d9e6;
+    background: url('../images/blue.ico') no-repeat;
+    background-color: #f7f2f9;
 }
 
 .red {
-  width: 12.5%;
-  border: 5px solid black;
-  border-radius: 100%;
-  background-color: #e65f61;
+    background: url('../images/red.ico') no-repeat;
+    background-color: #f7f2f9;
 }
 
 .cursorred {
-    cursor: url('../images/r.ico') 15 15, auto;
+    cursor: url('../images/red.ico') 15 15, auto;
 }
 
 .cursorblue {
-  cursor: url('../images/b.ico') 15 15, auto;
+  cursor: url('../images/blue.ico') 15 15, auto;
 }
 
 .score-container {
@@ -79,6 +76,7 @@ table td{
   line-height: 40px;
   background-color: #ffffff;
   cursor: pointer;
+  box-shadow: 6px 6px 14px 3px rgba(5,5,5,0.7);
 
 }
 

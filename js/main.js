@@ -1,21 +1,27 @@
 /*--- variables ---*/
 
 var currentPlayer, state, scoreA, scoreB, horizontal1, horizontal2,
-vertical1, vertical2, diag1, diag2, diag3, diag4;
+vertical1, vertical2, diag1, diag2, diag3, diag4, winner, winningColor, checkBoard;
 
 /*--- event listeners ---*/
 
 $(document).ready(function() {
-  $('.modal').show();
+  $('.gamestart').show();
 })
 
 $('.button').on('click', function () {
   $('.modal').hide();
+  $('.gameover').hide();
 })
 
 $('.button').on('click', initialize);
 
 $('table').on('click', '.cell', playTurn);
+
+$('.skipturn').on('click', function() {
+  currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
+  render(state);
+})
 
 
 
@@ -47,6 +53,7 @@ function counter(array) {
   }
 }
 
+//Updates the view to reflect the state
 function render(array) {
   for (var x = 0; x <  array.length; x++) {
     for (var y = 0; y < array[x].length; y++) {
@@ -54,6 +61,8 @@ function render(array) {
           $(`#${8*x+y}`).removeClass('red').addClass('blue');
       } else if (array[x][y] === -1){
           $(`#${8*x+y}`).removeClass('blue').addClass('red');
+        } else {
+          $(`#${8*x+y}`).removeClass('blue').removeClass('red');
         }
     }
   }
@@ -64,6 +73,11 @@ function render(array) {
 
   $('.player1').text(scoreA);
   $('.player2').text(scoreB);
+
+  if (winner) {
+    $('.win-message').text('Congrats ' + winningColor + '! You win.');
+    $('.gameover').show();
+  }
 }
 
 //run playTurn at Player click
@@ -84,6 +98,9 @@ function playTurn(evt) {
   counter(state);
   //update current player
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
+
+  //check for winner
+  checkWinner();
   //render(); ie. update scores and class
   render(state);
   //
@@ -218,6 +235,16 @@ function updateState(clickX, clickY) {
       state[clickX-i][clickY+i] = currentPlayer;
     }
   }
+}
+
+// Checks to see if there is a winner
+function checkWinner() {
+  checkBoard = [];
+  for (var x = 0; x <state.length; x++){
+    checkBoard.push(state[x].indexOf(0));
+  }
+  JSON.stringify(checkBoard) === JSON.stringify([-1, -1, -1, -1, -1, -1, -1, -1]) ? winner = true : winner = false;
+  scoreA > scoreB ? winningColor = 'blue' : winningColor = 'red';
 }
 
 

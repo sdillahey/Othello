@@ -9,12 +9,12 @@ $(document).ready(function() {
   $('.gamestart').show();
 })
 
-$('.button').on('click', function () {
-   $('.gamestart').hide();
-})
-
 $('.replay').on('click', function () {
    $('.gameover').hide();
+})
+
+$('.begin').on('click', function () {
+   $('.gamestart').hide();
 })
 
 $('.button').on('click', initialize);
@@ -308,4 +308,3 @@ function initialize() {
   counter(state);
   render(state);
  }
-

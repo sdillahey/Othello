@@ -240,13 +240,40 @@ function updateState(clickX, clickY) {
 // Checks to see if there is a winner
 function checkWinner() {
   checkBoard = [];
+  var emptySpaces = [];
+  //iterates through the state area to look for a blank space
   for (var x = 0; x <state.length; x++){
     checkBoard.push(state[x].indexOf(0));
+    console.log(getAllIndexes(state[x],0));
+    console.log('a', state[x]);
   }
+
+  // check if board is full
   JSON.stringify(checkBoard) === JSON.stringify([-1, -1, -1, -1, -1, -1, -1, -1]) ? winner = true : winner = false;
+
+  // check which score is bigger
   scoreA > scoreB ? winningColor = 'blue' : winningColor = 'red';
 }
 
+var testA = [-1, -1, -1, -1, -1, -1, 0, 0]
+var testB = [7, -1, -1, -1, -1, -1, 7, 6]
+var almostDone = "[[0,0,-1,0,0,-1,1,0],[0,0,-1,-1,-1,-1,-1,-1],[-1,-1,-1,1,1,-1,1,-1],[0,-1,1,-1,1,-1,1,-1],[-1,-1,-1,1,-1,1,1,-1],[1,-1,1,-1,1,1,1,-1],[1,-1,-1,1,1,1,1,-1],[1,-1,-1,-1,-1,-1,-1,-1]]"
+
+function getToEnd() {
+  state = JSON.parse(almostDone)
+  render(state)
+}
+
+//get indexes of empty spaces
+function getAllIndexes(array, val) {
+  var indices = [];
+  for (var i = 0; i < array.length; i++) {
+    if (array[i] === val) {
+      indices.push(i);
+    }
+  }
+  return indices;
+}
 
 // Sets up the board to the initial game set-up
 function initialize() {

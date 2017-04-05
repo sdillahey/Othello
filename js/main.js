@@ -1,20 +1,20 @@
 /*--- variables ---*/
 
 var currentPlayer, state, scoreA, scoreB, horizontal1, horizontal2,
-vertical1, vertical2, diag1, diag2, diag3, diag4, emptySpaces, checkBoard, winner, winningColor;
+vertical1, vertical2, diag1, diag2, diag3, diag4, emptySpaces, winner, winningColor;
 
 /*--- event listeners ---*/
 
 $(document).ready(function() {
-  $('.gamestart').show();
+  $('.gamestart').toggle();
 })
 
-$('.replay').on('click', function () {
-   $('.gameover').hide();
+$('#begin').on('click', function () {
+   $('.gamestart').toggle();
 })
 
-$('.begin').on('click', function () {
-   $('.gamestart').hide();
+$('#replay').on('click', function () {
+   $('.gameover').toggle();
 })
 
 $('.button').on('click', initialize);
@@ -80,7 +80,7 @@ function render(array) {
 
   if (winner) {
     $('.win-message').text('Congrats ' + winningColor + '! You win.');
-    $('.gameover').show();
+    $('.gameover').toggle();
   }
 }
 
@@ -247,29 +247,23 @@ function checkWinner() {
   scoreA > scoreB ? winningColor = 'blue' : winningColor = 'red';
 
   emptySpaces = [];
-  checkBoard = [];
 
   //iterates through the state array and pushes the indices of all empty spaces to emptySpaces
-  //creates an array of the indices of blank spaces
   for (var x = 0; x <state.length; x++){
     var emptyX = getAllIndexes(state[x],0);
-    checkBoard.push(state[x].indexOf(0));
     for(var y = 0; y < emptyX.length; y++) {
       emptySpaces.push([x,emptyX[y]]);
     }
   }
 
-  if (JSON.stringify(checkBoard) === JSON.stringify([-1, -1, -1, -1, -1, -1, -1, -1])) {
+  if (emptySpaces.length === 0) {
     return winner = true;
   }
-//try starting with if (emptySpaces is an empty array) return winner = true
+
   for (var i = 0; i<emptySpaces.length; i++){
     if(legalMove(emptySpaces[i][0],emptySpaces[i][1], currentPlayer)) {
-      console.log('checkpoint 1')
       return winner = false;
-     // check emptySpaces for legalMove for opponenet
     } else if (legalMove(emptySpaces[i][0], emptySpaces[i][1], -currentPlayer)) {
-        console.log('check 2')
         return winner = false;
       }
    }

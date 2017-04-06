@@ -28,13 +28,13 @@ $('table').on('click', '.cell', playTurn);
 $('.skipturn').on('click', function() {
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
   checkWinner();
-  render(board);
+  render();
 })
 
 
 /*--- functions ---*/
 
-// When called, createBoard creates an 8x8 array of arrays of zeroes to represent the blank board
+//createBoard creates an 8x8 array of arrays of zeroes to represent the blank board
 function createBoard() {
   board = [];
   for (var i = 0; i<8; i++) {
@@ -45,7 +45,8 @@ function createBoard() {
   }
 }
 
-// counter function is used to get the score by iterating through the game board array
+
+//counter function is used to get the score by iterating through the game board array
 function counter() {
   scoreA = 0;
   scoreB = 0;
@@ -60,7 +61,7 @@ function counter() {
   }
 }
 
-// updateState function updates the game board array in the case of a legal move
+//updateState function updates the game board array in the case of a legal move
 function updateState(x, y) {
 
   //updates the spot where the player placed their game piece
@@ -109,7 +110,8 @@ function updateState(x, y) {
   }
 }
 
-// render function updates the view to reflect the state of the board
+
+//render updates the view to reflect the state of the board
 function render() {
   for (var x = 0; x <  board.length; x++) {
     for (var y = 0; y < board[x].length; y++) {
@@ -124,8 +126,9 @@ function render() {
   }
   if (currentPlayer === 1) {
     $('table').removeClass('cursorred').addClass('cursorblue');
-    } else
+  } else {
       $('table').removeClass('cursorblue').addClass('cursorred');
+  }
 
   $('.player1').text(scoreA);
   $('.player2').text(scoreB);
@@ -136,25 +139,23 @@ function render() {
   }
 }
 
-//run playTurn at Player click
-function playTurn(evt) {
 
+//run playTurn at the player's move
+function playTurn(evt) {
   //set the x and y coordinates of the click event
   var clickId = evt.target.id;
   var clickX = Math.floor(clickId/8);
   var clickY = clickId%8;
 
-  //run legalMove to see if that move is allowed
+  //run legalMove to see if that move is allowed. If it is not, the player must perform another action
   if(!legalMove(clickX, clickY, currentPlayer)) return;
-
   // In the case of a legal move, update the board state
   updateState(clickX,clickY);
-
   //update score count
   counter();
   //update current player
   currentPlayer === 1 ? currentPlayer = -1 : currentPlayer = 1;
-
+  //play sound for pieces flipped
   var pieceFlip = Math.max(horizontal1, horizontal2, vertical1, vertical2, diag1, diag2, diag3, diag4);
   for (var i = 0; i < pieceFlip; i++) {
     setTimeout(function() {
@@ -163,10 +164,12 @@ function playTurn(evt) {
   }
   //check for winner
   checkWinner();
-  //render(); ie. update scores and class
+  //update the view of the board to reflect the game state
   render();
 }
 
+
+//legalMove returns true or false for a cell's legality in the instance of a particular player
 function legalMove(x, y, currentPlayer) {
   // create an array of the column where the click event took place
   var clickCol = [];
@@ -178,26 +181,22 @@ function legalMove(x, y, currentPlayer) {
   for (var i = 1; i<Math.min(board.length-x, board.length-y); i++){
     clickDiag1.push(board[x+i][y+i]);
   }
-
   var clickDiag2 = [];
   for (var i = 1; i<Math.min(board.length-x, y+1); i++) {
     clickDiag2.push(board[x+i][y-i]);
   }
-
   var clickDiag3 = [];
   for (var i = 1; i<Math.min(x+1,y+1); i++) {
     clickDiag3.push(board[x-i][y-i]);
   }
-
   var clickDiag4 = [];
   for (var i = 1; i<Math.min(x+1, board.length-y); i++) {
     clickDiag4.push(board[x-i][y+i]);
   }
-
-  //Doesn't allow a player to select a spot where a piece has already been placed
+  //disallows a player to select a spot where a piece has already been placed
   if (board[x][y]) return false;
-
-  //sets and finds the first occurance of currentPlayer's piece or blank cell, along the horizontals, verticals and diagonals
+  //represents the # of pieces that need to be flipped in each direction by finding
+  //the first occurance of the current player's piece or blank cell
   if (board[x].slice(y+1).indexOf(0)> -1){
     horizontal1 = board[x].slice(y+1).indexOf(0) < board[x].slice(y+1).indexOf(currentPlayer) ? 0 : board[x].slice(y+1).indexOf(currentPlayer);
   } else {
@@ -246,46 +245,39 @@ function legalMove(x, y, currentPlayer) {
     diag4 = clickDiag4.indexOf(currentPlayer);
   }
 
-
-// Checks to see if the move is legal in at least one direction
+//checks to see if the move is legal in at least one direction
 return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
   vertical2 > 0 || diag1 > 0 || diag2 > 0 || diag3 > 0 || diag4 > 0;
-
 }
 
 
-
-// Checks to see if there is a winner
+//checks to see if there is a winner
 function checkWinner() {
-  // check which score is bigger
+  //assigns the player with the highest score to winningColor
   winningColor = scoreA > scoreB ? 'blue' : 'red';
-
-  var emptySpaces = [];
-
   //iterates through the board array and pushes the indices of all empty spaces to emptySpaces
+  var emptySpaces = [];
   for (var x = 0; x <board.length; x++){
     var emptyX = getAllIndexes(board[x],0);
     for(var y = 0; y < emptyX.length; y++) {
       emptySpaces.push([x,emptyX[y]]);
     }
   }
-
+  //the game is over when the board is full
   if (!emptySpaces.length) {
     gameOver = true;
     return;
   }
-
+  //the game is over only when both players have no legal moves remaining
   for (var i = 0; i<emptySpaces.length; i++){
     if (legalMove(emptySpaces[i][0],emptySpaces[i][1], currentPlayer) ||
       legalMove(emptySpaces[i][0], emptySpaces[i][1], -currentPlayer)) return;
   }
-
   gameOver = true;
-
 }
 
 
-//get indexes of empty spaces
+//get indices of empty spaces
 function getAllIndexes(array, val) {
   var indices = [];
   for (var i = 0; i < array.length; i++) {

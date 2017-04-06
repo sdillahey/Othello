@@ -15,6 +15,9 @@ To play Othello online, grab a friend and follow the link below. If you're inter
 ### Starting at Square One:
 ![Planning and Project Management](https://i.imgur.com/IIxepWc.png "Planning and Project Management")
 
+### Work in Progress:
+![Othello Production](https://media.giphy.com/media/n3npkZZQ8E0PC/giphy.gif)
+
 ### Technologies Used:
 - HTML5
 - CSS3

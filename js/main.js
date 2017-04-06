@@ -37,10 +37,10 @@ $('.skipturn').on('click', function() {
 // When called, createBoard creates an 8x8 array of arrays of zeroes to represent the blank board
 function createBoard() {
   board = [];
-  for (var x = 0; x<8; x++) {
+  for (var i = 0; i<8; i++) {
       board.push([]);
-    for (var y = 0; y<8; y++){
-      board[x].push(0);
+    for (var j = 0; j<8; j++){
+      board[i].push(0);
     }
   }
 }
@@ -49,11 +49,11 @@ function createBoard() {
 function counter() {
   scoreA = 0;
   scoreB = 0;
-  for (var x = 0; x <  board.length; x++) {
-    for (var y = 0; y < board[x].length; y++) {
-      if (board[x][y] === 1) {
+  for (var i = 0; i <  board.length; i++) {
+    for (var j = 0; j < board[i].length; j++) {
+      if (board[i][j] === 1) {
         scoreA++;
-      } else if (board[x][y] === -1) {
+      } else if (board[i][j] === -1) {
         scoreB++;
       }
     }
@@ -147,7 +147,7 @@ function playTurn(evt) {
   //run legalMove to see if that move is allowed
   if(!legalMove(clickX, clickY, currentPlayer)) return;
 
-  // In the case of a legal move, update the board
+  // In the case of a legal move, update the board state
   updateState(clickX,clickY);
 
   //update score count
@@ -165,7 +165,6 @@ function playTurn(evt) {
   checkWinner();
   //render(); ie. update scores and class
   render();
-  //
 }
 
 function legalMove(x, y, currentPlayer) {
@@ -249,7 +248,7 @@ function legalMove(x, y, currentPlayer) {
 
 
 // Checks to see if the move is legal in at least one direction
-  return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
+return horizontal1 > 0 || horizontal2 > 0 || vertical1 > 0 ||
   vertical2 > 0 || diag1 > 0 || diag2 > 0 || diag3 > 0 || diag4 > 0;
 
 }

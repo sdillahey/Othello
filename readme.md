@@ -1,6 +1,6 @@
 # Othello
 ## A Two-Player Strategy Game
-Tasked with programming a game, my mind instantly turned to one of my favorite two player board games - Othello. The rules of the game are simple, but a superior strategy is required to outflank your opponent. You may recognize Othello by it's classic black and white style, or perhaps by the name Reversi, but I decided to revamp it to a more modern, colorful version while keeping it's minimalist design.
+Tasked with programming a game, my mind instantly turned to one of my favorite two player board games - Othello. The rules of the game are simple, but a superior strategy is required to outflank your opponent. You may recognize Othello by it's classic black and white style, or perhaps by the name Reversi, but I decided to revamp it to a more modern, colorful version while keeping its minimalist design.
 
 ![Othello game board](https://i.imgur.com/d2TfqLq.png)
 
